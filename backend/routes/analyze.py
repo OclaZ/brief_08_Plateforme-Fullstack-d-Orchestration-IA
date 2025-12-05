@@ -1,10 +1,11 @@
 
-from fastapi import APIRouter , HTTPException, status
+from fastapi import APIRouter , HTTPException, status, Depends
 from dotenv import load_dotenv
 import os
 import requests
 import httpx
 from schemas.schemas import AnalyzeRequest, AnalyzeResponse , ErrorResponse
+from core.security import verify_token
 import google.generativeai as genai
 
 load_dotenv()
@@ -98,7 +99,7 @@ def query_gemini(text: str, category: str):
         504: {"model": ErrorResponse, "description": "Timeout lors de l'appel à l'API Hugging Face"}
     },
 )
-async def analyze_article(request: AnalyzeRequest):
+async def analyze_article(request: AnalyzeRequest ,token_data: dict = Depends   (verify_token)):
 
     candidate_labels = [
     
