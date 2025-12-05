@@ -13,7 +13,7 @@ ASYNC_DB_URL = re.sub(r"^postgresql:", "postgresql+asyncpg:", DATABASE_URL)
 
 engine = create_async_engine(
     ASYNC_DB_URL,
-    echo=False,
+    echo=True,
     pool_pre_ping=True,
 )
 
