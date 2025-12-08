@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState , type FormEvent, useEffect } from 'react';
 import { Brain, LogOut, FileText, TrendingUp, BarChart3, Smile, Frown, Minus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { RecordWithTtl } from 'dns';
 
 const AnalyzePage = () => {
   const [text, setText] = useState('');
@@ -23,7 +24,7 @@ const AnalyzePage = () => {
     window.location.href = '/';
   };
 
-  const handleAnalyze = async (e) => {
+  const handleAnalyze = async (e:React.FormEvent) => {
     e.preventDefault();
     
     if (!text.trim()) {
