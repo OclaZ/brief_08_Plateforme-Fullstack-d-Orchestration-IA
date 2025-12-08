@@ -10,7 +10,8 @@ const LandingPage = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
 
-  const handleAuthSubmit = async (e) => {
+  // Fix: Explicitly type the event as React.FormEvent
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -85,7 +86,7 @@ const LandingPage = () => {
               </div>
             )}
 
-            <div onSubmit={handleAuthSubmit} className="space-y-4">
+            <form onSubmit={handleAuthSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Nom d'utilisateur
@@ -113,13 +114,13 @@ const LandingPage = () => {
               </div>
 
               <button
-                onClick={handleAuthSubmit}
+                type="submit"
                 disabled={loading}
                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl"
               >
                 {loading ? 'Chargement...' : authMode === 'login' ? 'Se connecter' : 'S\'inscrire'}
               </button>
-            </div>
+            </form>
 
             <div className="mt-6 text-center">
               <button
