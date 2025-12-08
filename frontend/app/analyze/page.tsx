@@ -1,21 +1,33 @@
 'use client';
 
-import React, { useState , type FormEvent, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Brain, LogOut, FileText, TrendingUp, BarChart3, Smile, Frown, Minus, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { RecordWithTtl } from 'dns';
+
+// Define the shape of the analysis result to satisfy TypeScript
+interface AnalysisResult {
+  category: string;
+  confidence_score: number;
+  sentiment: string;
+  summary: string;
+  [key: string]: any; // Allow other properties
+}
 
 const AnalyzePage = () => {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  // Add type definition here
+  const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState('');
-  const [history, setHistory] = useState([]);
+  // Fix: Explicitly tell TypeScript this is an array of objects/any
+  const [history, setHistory] = useState<any[]>([]);
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    if (!token) {
-      window.location.href = '/login';
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+      }
     }
   }, []);
 
@@ -24,7 +36,7 @@ const AnalyzePage = () => {
     window.location.href = '/';
   };
 
-  const handleAnalyze = async (e:React.FormEvent) => {
+  const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!text.trim()) {
@@ -76,6 +88,7 @@ const AnalyzePage = () => {
         ...data,
         timestamp: new Date().toLocaleString('fr-FR'),
       };
+      // Typescript now accepts this because history is any[]
       setHistory([newEntry, ...history.slice(0, 4)]);
       
     } catch (err) {
@@ -86,7 +99,8 @@ const AnalyzePage = () => {
     }
   };
 
-  const getSentimentIcon = (sentiment) => {
+  // Fix: Added type string
+  const getSentimentIcon = (sentiment: string) => {
     const s = sentiment?.toLowerCase() || '';
     if (s.includes('positive') || s.includes('positif')) {
       return <Smile className="w-6 h-6 text-green-600" />;
@@ -96,7 +110,8 @@ const AnalyzePage = () => {
     return <Minus className="w-6 h-6 text-gray-600" />;
   };
 
-  const getSentimentColor = (sentiment) => {
+  // Fix: Added type string
+  const getSentimentColor = (sentiment: string) => {
     const s = sentiment?.toLowerCase() || '';
     if (s.includes('positive') || s.includes('positif')) {
       return 'bg-green-100 text-green-800 border-green-200';
@@ -106,8 +121,9 @@ const AnalyzePage = () => {
     return 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
-  const getCategoryColor = (category) => {
-    const colors = {
+  // Fix: Added type string and typed the object
+  const getCategoryColor = (category: string) => {
+    const colors: Record<string, string> = {
       'Finance': 'bg-blue-100 text-blue-800',
       'Human Resources': 'bg-purple-100 text-purple-800',
       'IT': 'bg-cyan-100 text-cyan-800',
@@ -184,11 +200,11 @@ const AnalyzePage = () => {
                   </label>
                  <textarea
                     value={text}
-  onChange={(e) => setText(e.target.value)}
-  placeholder="Collez votre article ou texte ici..."
-  rows={8}
-  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none text-black"
-/>
+                    onChange={(e) => setText(e.target.value)}
+                    placeholder="Collez votre article ou texte ici..."
+                    rows={8}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none text-black"
+                  />
 
                 </div>
 
@@ -309,12 +325,15 @@ const AnalyzePage = () => {
                       className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition cursor-pointer"
                       onClick={() => {
                         setText(entry.text);
-                        setResult({
-                          category: entry.category,
-                          confidence_score: entry.confidence_score,
-                          summary: entry.summary,
-                          sentiment: entry.sentiment,
-                        });
+                        // Ensure entry matches the result shape
+                        if (entry.category && entry.confidence_score) {
+                            setResult({
+                            category: entry.category,
+                            confidence_score: entry.confidence_score,
+                            summary: entry.summary,
+                            sentiment: entry.sentiment,
+                            });
+                        }
                       }}
                     >
                       <div className="flex items-center justify-between mb-2">
