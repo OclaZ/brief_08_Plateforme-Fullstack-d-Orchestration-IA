@@ -57,7 +57,7 @@ def query_huggingface_api(payload: dict) -> dict:
     
 def query_gemini(text: str, category: str):
     try:
-        model = genai.GenerativeModel('gemini-2.5-pro')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         prompt = f"""
         Role: Media Analyst.
         Context: An article classified as '{category}'.

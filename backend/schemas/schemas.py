@@ -11,12 +11,11 @@ class UserBase(BaseModel):
 class UserCreate(BaseModel):
     username: str
     password: str
-    createdat: str = Field(..., example="2024-06-01T12:00:00Z")
+    createdat: str | None = None
 class UserOut(BaseModel):
     id: int
     username: str
-    createdat: str
-
+    createdat: str | None = None
     class Config:
         orm_mode = True
 

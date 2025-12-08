@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from sqlalchemy import text
-
+from fastapi.middleware.cors import CORSMiddleware
 # Adjust these imports based on your actual folder structure
 from core.database import engine, get_db
 from models.users import Base  # Ensure this file exists and has your models
@@ -9,6 +9,13 @@ from routes.login import router as login_router
 from routes.analyze import router as analyze_router
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Database Initialization ---
 async def init_db():
@@ -22,17 +29,13 @@ async def init_db():
 async def startup_event():
     print("\n🔄 Checking database connection...")
     try:
-        # Test the connection
         async with engine.connect() as conn:
             await conn.execute(text("SELECT 1"))
             print("✅ Database connection successful!")
-        
-        # Initialize tables
-        await init_db()
-        
     except Exception as e:
+        import traceback
         print("❌ Database connection failed!")
-        print(f"Error details: {e}")
+        traceback.print_exc()
 
 # --- Routes ---
 @app.get("/")

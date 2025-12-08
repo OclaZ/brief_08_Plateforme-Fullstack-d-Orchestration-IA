@@ -20,9 +20,7 @@ router = APIRouter(tags=["Register"])
 
 @router.post("/register", response_model=UserOut)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
-
     # Check username
-    
     result = await db.execute(select(User).filter(User.username == user.username))
     db_user = result.scalar_one_or_none()
     if db_user:
@@ -32,12 +30,10 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         )
 
     safe_password = user.password[:72]
-
     hashed_password = pwd_context.hash(safe_password)
-    createdate =datetime.now().__str__()
-    print(createdate)
-    print(type(createdate))
     
+    # Use provided createdat or generate new one
+    createdate = user.createdat if user.createdat else datetime.now().__str__()
 
     new_user = User(
         username=user.username,
